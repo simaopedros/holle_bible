@@ -129,6 +129,8 @@ class BibliaProvider {
         Biblia bitemp = Biblia.fromMap(v);
         biblias.add(bitemp);
       });
+    }else{
+      return [];
     }
     _carregandoController.sink.add(true);
     return biblias;

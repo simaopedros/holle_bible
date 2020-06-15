@@ -1,16 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:holle_bible/pages/leitura_page.dart';
 import 'package:holle_bible/pages/lista_capitulos_page.dart';
-// import 'package:holle_bible/providers/biblia_provider.dart';
-// import 'package:holle_bible/providers/preferencias.dart';
+import 'package:holle_bible/pages/versiculo_dia.dart';
+import 'package:holle_bible/providers/push_notifications_provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool isNotification;
+  List dadosNotificacao = new List();
+  final provider = new PushNotificationProvider();
+  @override
+  void initState() {
+    
+    isNotification = false;
+    provider.initNotifications();
+    provider.versiculoDoDia.listen((event) {
+      setState(() {
+        isNotification = true;
+        event.forEach((element) {
+          dadosNotificacao.add(element);
+          print("Elemento $element");
+        });
+        
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromRGBO(54, 55, 149, 1.0),
+        elevation: 0,
+        actions: <Widget>[
+          Visibility(
+            visible: isNotification,
+            child: IconButton(
+                onPressed: () {
+                  //!-------
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => VersiculoDia(
+                        numeroCapitulo: dadosNotificacao[0],
+                        numerodoLivro: dadosNotificacao[1],
+                        tipoTestamento: dadosNotificacao[3],
+                        versiculo: dadosNotificacao[4],
+                      )));
+                  //!-------
+                }, icon: Icon(Icons.notification_important)
+            ),
+          ),
+        ],
+      ),
       body: Stack(
         children: <Widget>[
           _fundo(),
@@ -21,17 +69,6 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _conteudo(context) {
-    // final prefs = new PreferenciasUsuario();
-    // final provider = new BibliaProvider();
-    // List ultimaLeitura = prefs.ultimaLeitura;
-    // List favoritosList = prefs.versiculosFavoritos;
-    // List listaDeFavoritos = new List();
-    // favoritosList.forEach((element) {
-    //   print(element);
-    //  });
-
-    // final nomeLivro = provider.getNomeLivro(int.tryParse(ultimaLeitura[2]) - 1);
-
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
@@ -54,82 +91,11 @@ class HomePage extends StatelessWidget {
                           capituloFinal: 39,
                         ))),
                 child: _caixaLivro("antigo", "Testamento", context)),
-            // _subTitulo("continuar", "Leitura", context),
-            // _ultimaLeirua(context, ultimaLeitura, nomeLivro),            
-              // _subTitulo("leituras", "Salvas", context),
-              // for(var i =0; i < favoritosList.length; i++)
-            // _ultimaLeirua(context, ultimaLeitura, nomeLivro),
           ],
         ),
       ),
     );
   }
-
-  // Widget _ultimaLeirua(
-  //     BuildContext context, List<String> leitura, String nomedoLivro) {
-  //   final _size = MediaQuery.of(context).size;
-  //   return FlatButton(
-  //     child: Container(
-  //       alignment: Alignment.centerLeft,
-  //       padding: EdgeInsets.all(15.0),
-  //       margin: EdgeInsets.all(10.0),
-  //       decoration: BoxDecoration(
-  //         borderRadius: BorderRadius.circular(10.0),
-  //         color: Colors.black,
-  //       ),
-  //       width: _size.width * 0.8,
-  //       height: 70.0,
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: <Widget>[
-  //           Text("$nomedoLivro - ${leitura[3]}",
-  //               style: GoogleFonts.roboto(color: Colors.white, fontSize: 20.0)),
-  //           Icon(
-  //             Icons.more_horiz,
-  //             color: Colors.white,
-  //           )
-  //         ],
-  //       ),
-  //     ),
-
-
-  //     onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-  //                 builder: (context) => LeituraPage(
-  //                       numeroCapitulo: int.tryParse(leitura[3]),
-  //                       numerodoLivro: int.tryParse(leitura[2]),
-  //                       tipoTestamento:["${leitura[0]}", "${leitura[1]}"],
-  //                     )
-  //                     )
-  //                     ),
-
-  //   );
-  // }
-
-  // Widget _subTitulo(String firtName, String secondName, BuildContext context) {
-  //   final _size = MediaQuery.of(context).size;
-
-  //   return Container(
-  //     width: _size.width * 0.8,
-  //     child: Row(
-  //       children: <Widget>[
-  //         Text(
-  //           firtName,
-  //           style: GoogleFonts.roboto(
-  //               color: Colors.white,
-  //               fontWeight: FontWeight.w200,
-  //               fontSize: 20.0),
-  //         ),
-  //         Text(
-  //           secondName,
-  //           style: GoogleFonts.roboto(
-  //               color: Colors.white,
-  //               fontWeight: FontWeight.bold,
-  //               fontSize: 20.0),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _caixaLivro(String firtNome, String secundNome, context) {
     final _size = MediaQuery.of(context).size;

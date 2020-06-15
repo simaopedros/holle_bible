@@ -4,8 +4,10 @@ import 'package:holle_bible/pages/home_page.dart';
 import 'package:holle_bible/pages/leitura_page.dart';
 import 'package:holle_bible/pages/lista_capitulos_page.dart';
 import 'package:holle_bible/pages/lista_numero_capitulos.dart';
+import 'package:holle_bible/pages/versiculo_dia.dart';
 import 'package:holle_bible/providers/biblia_provider.dart';
 import 'package:holle_bible/providers/preferencias.dart';
+import 'package:holle_bible/providers/push_notifications_provider.dart';
 
 void main() async {
   runApp(MyApp());
@@ -19,6 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
   final GlobalKey<NavigatorState> navigatorKey =
       new GlobalKey<NavigatorState>();
   bool verificaDBInstall;
@@ -26,11 +29,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+
     provider.iniDataBase();
     provider.statusDowloadStream.listen((event) {
       navigatorKey.currentState.pushNamed("inicialPage");
     });
     super.initState();
+    final pushProvider = new PushNotificationProvider();
+    pushProvider.initNotifications();
   }
 
   @override
@@ -40,6 +46,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Material App',
       initialRoute: "inicialPage",
+      // initialRoute: 'versiculoDia',
       routes: {
         '/': (BuildContext context) => HomePage(),
         'leitura': (BuildContext context) => LeituraPage(),
@@ -47,6 +54,7 @@ class _MyAppState extends State<MyApp> {
         'listaNumeroCapitulos': (BuildContext context) =>
             ListaNumeroCapitulos(),
         'inicialPage': (BuildContext context) => _inicialPage(context),
+        'versiculoDia' : (BuildContext context) => VersiculoDia(),
       },
     );
   }

@@ -4,7 +4,6 @@ import 'package:holle_bible/providers/biblia_provider.dart';
 import 'package:holle_bible/providers/preferencias.dart';
 import 'package:holle_bible/services/admob_services.dart';
 
-
 class LeituraPage extends StatefulWidget {
   final List tipoTestamento;
   final int numerodoLivro;
@@ -20,11 +19,7 @@ class LeituraPage extends StatefulWidget {
 
 class _LeituraPageState extends State<LeituraPage> {
   final ams = AdmobServices();
-  // static const adUnitId = "ca-app-pub-3940256099942544/2247696110"; //TESTE
-  double _alturaAds = 0;
-  static const adUnitId = "ca-app-pub-6361762260659022/7696609428";//OFICIAL
-  
- 
+
   BibliaProvider provider = new BibliaProvider();
   List<Biblia> biblias = new List();
 
@@ -57,7 +52,6 @@ class _LeituraPageState extends State<LeituraPage> {
 
   @override
   void initState() {
-    _alturaAds = 90;
     mostrarTela = false;
     bookId = widget.numerodoLivro;
     capitulo = widget.numeroCapitulo;
@@ -66,9 +60,8 @@ class _LeituraPageState extends State<LeituraPage> {
     qtdVersiculos = 0;
     qtdCapitulos = 0;
     carregarBiblia();
+
     super.initState();
-    
-   
   }
 
   @override
@@ -128,7 +121,7 @@ class _LeituraPageState extends State<LeituraPage> {
           ),
           _buttonsBackNext(),
           SizedBox(
-            height: 25.0,
+            height: 60.0,
           ),
         ],
       ),
@@ -217,35 +210,27 @@ class _LeituraPageState extends State<LeituraPage> {
       width: _size.width * 0.8,
       child: Column(
         children: <Widget>[
-          for (var i = 0; i < biblias.length; i++)
-            Column(
-              children: <Widget>[
-                _cardVersiculo(biblias[i].ptNar),
-                Visibility(
-                  visible: (i % 10 == 2),
-                  child: Card(
-                    elevation: 3,
-                    child: Container(
-                      padding: EdgeInsets.all(5.0),                        
-                        height: _alturaAds,
-                        child: Text("ADS")),
-                  ),
-                )
-              ],
-            ),
+          for (int i = 0; i < biblias.length; i++)
+            _cardVersiculo(biblias[i].ptNar, i + 1),
         ],
       ),
     );
   }
 
-  Widget _cardVersiculo(String versiculo) {
-    return Stack(
+  Widget _cardVersiculo(String versiculo, int numVersiculo) {
+    return Row(
       children: <Widget>[
-        Card(
-          elevation: 3.0,
-          child: Container(
-            padding: EdgeInsets.all(10.0),
-            child: Text(versiculo, textAlign: TextAlign.justify),
+        Container(
+          width: 25.0,
+          child: Text(numVersiculo.toString())),
+        SizedBox(width: 5.0,),
+        Expanded(
+          child: Card(
+            elevation: 3.0,
+            child: Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text(versiculo, textAlign: TextAlign.justify),
+            ),
           ),
         ),
       ],
